@@ -96,7 +96,9 @@ def compute_tree_AllNodes(f: np.ndarray) -> tuple[list[tuple[int, int]], np.ndar
     return R, parent
 
 
-def canonize_tree(parent: np.ndarray, f: np.ndarray, R: tuple[list[tuple[int, int]]]) -> np.ndarray:
+def canonize_tree(
+    parent: np.ndarray, f: np.ndarray, R: tuple[list[tuple[int, int]]]
+) -> np.ndarray:
     """
     Getting a simple and compressed representation of the tree.
 
@@ -147,8 +149,9 @@ def compute_area(f: np.ndarray, parent: np.ndarray) -> np.ndarray:
     return area
 
 
-def find_peak_root(parent: np.ndarray, x: tuple[int, int], lvl: int, f: np.ndarray) -> tuple[
-    tuple[int, int], tuple[int, int] | None]:
+def find_peak_root(
+    parent: np.ndarray, x: tuple[int, int], lvl: int, f: np.ndarray
+) -> tuple[tuple[int, int], tuple[int, int] | None]:
     """
     Find the peak root of a given node in the tree.
 
@@ -160,12 +163,15 @@ def find_peak_root(parent: np.ndarray, x: tuple[int, int], lvl: int, f: np.ndarr
     """
     q = parent[x]
     while q != x and lvl <= f[q]:
-        q, x = parent[q], q
+        old = q
+        q = parent[q]
+        x = old
     return x, q
 
 
-def find_level_root(parent: np.ndarray, x: tuple[int, int], f: np.ndarray) -> tuple[
-    tuple[int, int], tuple[int, int] | None]:
+def find_level_root(
+    parent: np.ndarray, x: tuple[int, int], f: np.ndarray
+) -> tuple[tuple[int, int], tuple[int, int] | None]:
     return find_peak_root(parent, x, f[x], f)
 
 
@@ -186,7 +192,9 @@ def order_op(p: tuple[int, int], q: tuple[int, int], f: np.ndarray) -> bool:
     return False
 
 
-def connect(a: tuple[int, int], b: tuple[int, int] | None, f: np.ndarray, parent: np.ndarray) -> None:
+def connect(
+    a: tuple[int, int], b: tuple[int, int] | None, f: np.ndarray, parent: np.ndarray
+) -> None:
     """
     Connect two separate trees.
 
@@ -201,12 +209,14 @@ def connect(a: tuple[int, int], b: tuple[int, int] | None, f: np.ndarray, parent
             a, b = b, a
         a, _ = find_level_root(parent, a, f)
         b, _ = find_peak_root(parent, b, f[a], f)
-        if order_op(b, a, f):
-            a, b = b, a
+        # if order_op(b, a, f):
+        #    a, b = b, a
         if a == b:
             return
-        b = parent[b]
-        parent[b] = a # Equivalent to the function exchange(parent[b], a)
+        assert f[b] >= f[a]
+        old = parent[b]
+        parent[b] = a
+        b = old  # Equivalent to the function exchange(parent[b], a)
 
 
 def maxtree(f: np.ndarray) -> np.ndarray:
@@ -242,7 +252,7 @@ def root_none(parent: np.ndarray) -> None:
                 parent[p] = None
 
 
-def display_graph(parent: np.ndarray, filename: str) -> Digraph:
+def display_graph(parent: np.ndarray, img: np.ndarray, filename: str) -> Digraph:
     """
     Display the parent image (The tree) as graphviz tree.
 
@@ -256,8 +266,8 @@ def display_graph(parent: np.ndarray, filename: str) -> Digraph:
     for y in range(rows):
         for x in range(cols):
             if parent[y][x] is not None:
-                node_from = f"({y}, {x})"
-                node_to = f"({parent[y][x][0]}, {parent[y][x][1]})"
+                node_from = f"({y}, {x}) [{img[y, x]}]"
+                node_to = f"({parent[y][x][0]}, {parent[y][x][1]}) [{img[parent[y][x][0], parent[y][x][1]]}]"
                 dot.edge(node_from, node_to)
 
     dot.render(filename, format="png", cleanup=True)
