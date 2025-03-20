@@ -1,9 +1,11 @@
 import numpy as np
 from typing import Optional
-from graphviz import Digraph
 
 
-def find_root(node: tuple[int, int], parent: np.ndarray) -> tuple[int, int] | None:
+Point = tuple[int, int]
+
+
+def find_root(node: Point, parent: np.ndarray) -> Optional[Point]:
     """
     This function takes a node and finds the root from this node.
 
@@ -18,7 +20,7 @@ def find_root(node: tuple[int, int], parent: np.ndarray) -> tuple[int, int] | No
     return node
 
 
-def undef_neighbors(p: tuple[int, int], parent: np.ndarray) -> list[tuple[int, int]]:
+def undef_neighbors(p: Point, parent: np.ndarray) -> list[Point]:
     """
     Find all the 4-neighbors that has been already visited (their parent value is already set) and return them.
 
@@ -40,7 +42,7 @@ def undef_neighbors(p: tuple[int, int], parent: np.ndarray) -> list[tuple[int, i
     return neighbors
 
 
-def reverse_sort(f: np.ndarray) -> list[tuple[int, int]]:
+def reverse_sort(f: np.ndarray) -> list[Point]:
     """
     Return all the coordinates sorted in descending order by the value of the pixel in f.
 
@@ -55,7 +57,7 @@ def reverse_sort(f: np.ndarray) -> list[tuple[int, int]]:
     return sorted_coords_array
 
 
-def compute_tree(f: np.ndarray) -> tuple[list[tuple[int, int]], np.ndarray]:
+def compute_tree(f: np.ndarray) -> tuple[list[Point], np.ndarray]:
     """
     Fills the parent matrix and thus obtain the complete tree.
 
@@ -77,7 +79,7 @@ def compute_tree(f: np.ndarray) -> tuple[list[tuple[int, int]], np.ndarray]:
     return R, parent
 
 
-def compute_tree_AllNodes(f: np.ndarray) -> tuple[list[tuple[int, int]], np.ndarray]:
+def compute_tree_AllNodes(f: np.ndarray) -> tuple[list[Point], np.ndarray]:
     """
     Fills the parent matrix and thus obtain the complete tree of all nodes.
 
@@ -97,7 +99,7 @@ def compute_tree_AllNodes(f: np.ndarray) -> tuple[list[tuple[int, int]], np.ndar
 
 
 def canonize_tree(
-    parent: np.ndarray, f: np.ndarray, R: tuple[list[tuple[int, int]]]
+    parent: np.ndarray, f: np.ndarray, R: tuple[list[Point]]
 ) -> np.ndarray:
     """
     Getting a simple and compressed representation of the tree.
@@ -115,11 +117,10 @@ def canonize_tree(
     return parent
 
 
-def canonize_tree_noR(parent: np.ndarray, f: np.ndarray) -> np.ndarray:
+def canonize_tree_no_order(parent: np.ndarray, f: np.ndarray) -> np.ndarray:
     """
     Getting a simple and compressed representation of the tree.
 
-    :param R: List of all pixel sorted in decreasing order.
     :param parent: Parent image.
     :param f: Starting image.
     :return: Parent matrix with the canonized representation of the tree.
@@ -150,8 +151,8 @@ def compute_area(f: np.ndarray, parent: np.ndarray) -> np.ndarray:
 
 
 def find_peak_root(
-    parent: np.ndarray, x: tuple[int, int], lvl: int, f: np.ndarray
-) -> tuple[tuple[int, int], tuple[int, int] | None]:
+    parent: np.ndarray, x: Point, lvl: int, f: np.ndarray
+) -> tuple[Point, Point | None]:
     """
     Find the peak root of a given node in the tree.
 
@@ -170,12 +171,12 @@ def find_peak_root(
 
 
 def find_level_root(
-    parent: np.ndarray, x: tuple[int, int], f: np.ndarray
-) -> tuple[tuple[int, int], tuple[int, int] | None]:
+    parent: np.ndarray, x: Point, f: np.ndarray
+) -> tuple[Point, Point | None]:
     return find_peak_root(parent, x, f[x], f)
 
 
-def order_op(p: tuple[int, int], q: tuple[int, int], f: np.ndarray) -> bool:
+def order_op(p: Point, q: Point, f: np.ndarray) -> bool:
     """
     Implementation of a total order between pixels.
 
@@ -193,7 +194,7 @@ def order_op(p: tuple[int, int], q: tuple[int, int], f: np.ndarray) -> bool:
 
 
 def connect(
-    a: tuple[int, int], b: tuple[int, int] | None, f: np.ndarray, parent: np.ndarray
+    a: Point, b: Point | None, f: np.ndarray, parent: np.ndarray
 ) -> None:
     """
     Connect two separate trees.
@@ -250,25 +251,3 @@ def root_none(parent: np.ndarray) -> None:
             p = (y, x)
             if parent[p] == p:
                 parent[p] = None
-
-
-def display_graph(parent: np.ndarray, img: np.ndarray, filename: str) -> Digraph:
-    """
-    Display the parent image (The tree) as graphviz tree.
-
-    :param parent: Parent image.
-    :param filename: Name of the graphviz image.
-    :return: Graphviz tree that represents the parent image.
-    """
-    rows, cols = parent.shape
-    dot = Digraph()
-
-    for y in range(rows):
-        for x in range(cols):
-            if parent[y][x] is not None:
-                node_from = f"({y}, {x}) [{img[y, x]}]"
-                node_to = f"({parent[y][x][0]}, {parent[y][x][1]}) [{img[parent[y][x][0], parent[y][x][1]]}]"
-                dot.edge(node_from, node_to)
-
-    dot.render(filename, format="png", cleanup=True)
-    return dot
