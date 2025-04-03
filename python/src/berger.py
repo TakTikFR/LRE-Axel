@@ -160,7 +160,7 @@ def find_peak_root(
     :param x: The starting node.
     :param lvl: Reference intensity level
     :param f: Starting image.
-    :return: A tuple containing the peak root and its parent (or None if no parent exists).1
+    :return: A tuple containing the peak root and its parent (or None if no parent exists).
     """
     q = parent[x]
     while q != x and lvl <= f[q]:
@@ -173,6 +173,14 @@ def find_peak_root(
 def find_level_root(
     parent: np.ndarray, x: Point, f: np.ndarray
 ) -> tuple[Point, Point | None]:
+    """
+    Find the level root of a given node in the tree (The root with the same intensity as the point X).
+
+    :param parent: Parent image.
+    :param x: The starting node.
+    :param f: Starting image.
+    :return: A tuple containing the peak root and its parent (or None if no parent exists).
+    """
     return find_peak_root(parent, x, f[x], f)
 
 
