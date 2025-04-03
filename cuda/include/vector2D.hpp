@@ -5,6 +5,7 @@
 
 #include "point.hpp"
 #include <cassert>
+#include <cstring>
 #include <stdexcept>
 #include <vector>
 
@@ -34,8 +35,9 @@ public:
 
     cudaMallocManaged(&data, rows * cols * sizeof(T));
 
-    cudaMemcpy(data, data_.data(), rows * cols * sizeof(T),
-               cudaMemcpyHostToDevice);
+    std::memcpy(data, data_.data(), rows * cols * sizeof(T));
+
+    cudaDeviceSynchronize();
   }
 
   __host__ __device__ ~Vector2D() { cudaFree(data); }

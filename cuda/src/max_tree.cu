@@ -8,8 +8,8 @@
 /**
  * @brief Compare And Swap Cuda function for Point type.
  *        Check the word old located at the address address in global or shared
- *        memory, computes (old == compare ? val : old), and stores the result back to
- *        memory at the same address.
+ *        memory, computes (old == compare ? val : old), and stores the result
+ * back to memory at the same address.
  *
  * @param address Object to compare.
  * @param compare Object to compare with.
@@ -25,9 +25,9 @@ __device__ Point atomicCAS(Point *address, Point compare, Point val) {
 /**
  * @brief Maximum comparison Cuda function for Point Type.
  *        word old located at the address address in global or shared memory,
- *        computes the maximum of old and val, and stores the result back to memory at
- *        the same address. These three operations are performed in one atomic
- *        transaction. The function returns old.
+ *        computes the maximum of old and val, and stores the result back to
+ * memory at the same address. These three operations are performed in one
+ * atomic transaction. The function returns old.
  *
  * @param address Object to compare.
  * @param val Object to compare with.
