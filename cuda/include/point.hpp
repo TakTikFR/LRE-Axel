@@ -8,22 +8,13 @@
 #include <iostream>
 #include <ostream>
 
-class Point {
-public:
+struct Point {
   int x, y;
 
-  __host__ __device__ Point();
-  __host__ __device__ Point(int x, int y);
-
-  __host__ __device__ bool operator==(const Point &p) const;
-  __host__ __device__ bool operator!=(const Point &p) const;
-  __host__ __device__ bool operator>(const Point &p) const;
-  __host__ __device__ bool operator<(const Point &p) const;
-  __host__ __device__ bool operator<=(const Point &p) const;
-  __host__ __device__ bool operator>=(const Point &p) const;
+  __host__ __device__ auto operator<=>(const Point &) const = default;
   friend std::ostream &operator<<(std::ostream &os, const Point &P);
 };
 
-const inline Point NULL_POINT(-1, -1);
+__device__ constexpr inline Point NULL_POINT = Point(-1, -1);
 
 #endif // POINT_HPP
