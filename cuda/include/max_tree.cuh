@@ -3,11 +3,10 @@
 
 #pragma once
 
-#include "point.hpp"
-#include "vector2D.hpp"
+#include "cuda_runtime.h"
+#include "vector2D.cuh"
 
-__device__ Point atomicPointMax(Point *address, Point val);
-__global__ void kernel_maxtree(Vector2D<Point> *parent, Vector2D<int> f);
-void kernelMaxtree(Vector2D<Point> &parent, Vector2D<int> f);
+__global__ void kernel_maxtree(Vector2D<int> parent, Vector2D<int> f);
+void kernelMaxtree(Vector2D<int> parent, Vector2D<int> f);
 
 #endif // MAX_TREE_CUH

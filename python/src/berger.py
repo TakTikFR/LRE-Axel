@@ -218,8 +218,8 @@ def connect(
             a, b = b, a
         a, _ = find_level_root(parent, a, f)
         b, _ = find_peak_root(parent, b, f[a], f)
-        # if order_op(b, a, f):
-        #    a, b = b, a
+        if order_op(b, a, f):
+           a, b = b, a
         if a == b:
             return
         assert f[b] >= f[a]

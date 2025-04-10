@@ -19,3 +19,9 @@ canonize_tree_no_order(parentt, image4)
 display_graph(parentt, image4, "images/test_cannonic")
 
 print(parentt)
+print("other: ")
+for i in range(len(parentt)):
+    for j in range(len(parentt[0])):
+        print(image4[i][j], end=" ")
+    print('\n')
+print('\n')
