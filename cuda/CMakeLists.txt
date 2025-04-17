@@ -8,6 +8,9 @@ set(CMAKE_CUDA_STANDARD 20)
 
 find_package(CUDAToolkit REQUIRED)
 
+find_package(OpenCV REQUIRED)
+include_directories(${OpenCV_INCLUDE_DIRS})
+
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
 
 set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -Xcompiler -Wall -lineinfo -g -G --expt-relaxed-constexpr -rdc=true -Wno-deprecated-gpu-targets")
@@ -19,12 +22,16 @@ set(SOURCES
         src/max_tree.cu
         src/max_tree_c.cpp
         src/utils.cpp
+        src/tilling.cu 
+        src/tilling_c.cpp 
         main.cpp
 )
 
 set(HEADERS
         include/max_tree.cuh
         include/max_tree_c.hpp
+        include/tilling.cuh 
+        include/tilling_c.hpp
         include/utils.hpp
         include/vector2D.cuh
 )
@@ -36,7 +43,7 @@ set_target_properties(LRE_Axel PROPERTIES
         CUDA_RESOLVE_DEVICE_SYMBOLS ON
 )
 
-target_link_libraries(LRE_Axel PRIVATE CUDA::cudart)
+target_link_libraries(LRE_Axel PRIVATE CUDA::cudart ${OpenCV_LIBS})
 
 target_compile_options(LRE_Axel PRIVATE
         $<$<COMPILE_LANGUAGE:CUDA>:--expt-relaxed-constexpr -rdc=true -g -G -Wno-deprecated-gpu-targets>

@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <fstream>
 #include <iostream>
+#include <opencv2/opencv.hpp>
 #include <vector>
 
 #include "vector2D.cuh"
@@ -151,4 +152,26 @@ Vector2D<int> canonize_tree(Vector2D<int> parent, Vector2D<int> f)
     }
 
     return parent;
+}
+
+int* loadGrayImageAsVector(const std::string& path, int& rows, int& cols)
+{
+    cv::Mat image = cv::imread(path, cv::IMREAD_GRAYSCALE);
+    cv::Mat resized;
+    cv::resize(image, resized, cv::Size(128, 128));
+    if (image.empty())
+    {
+        std::cerr << "Image not found\n";
+        return nullptr;
+    }
+
+    rows = image.rows;
+    cols = image.cols;
+    int* vector = new int[rows * cols];
+
+    for (int i = 0; i < rows; ++i)
+        for (int j = 0; j < cols; ++j)
+            vector[i * cols + j] = static_cast<int>(image.at<uchar>(i, j));
+
+    return vector;
 }

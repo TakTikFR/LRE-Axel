@@ -124,19 +124,46 @@ __device__ void connect(int& a, int& b, const Vector2D<int>& f,
         if (f[b] < f[a])
             std::swap(a, b);
 
-        auto flr = findLevelRoot(parent, a, f);
-        auto fpr = findPeakRoot(parent, b, f[a], f);
-        a = flr.first;
-        b = fpr.first;
+        auto [newA, A] = findLevelRoot(parent, a, f);
+        a = newA;
+        auto [newB, B] = findPeakRoot(parent, b, f[a], f);
+        b = newB;
 
         if (totalOrderOp(b, a, f))
+        {
             std::swap(a, b);
+            std::swap(A, B);
+        }
 
         if (a == b)
             return;
 
-        b = atomicMax(&parent[b], a);
+        int old = atomicCAS(&parent[b], B, a);
+        if (old == B)
+            b = old;
     }
+}
+
+/**
+ * @brief Cuda kernel to canonicalized the tree.
+ *
+ * @param f Starting image.
+ * @param parent Parent image.
+ * @return __global__
+ */
+__global__ void kernel_flatten(Vector2D<int> f, Vector2D<int> parent)
+{
+    int rows = parent.getRows();
+    int cols = parent.getCols();
+    int size = rows * cols;
+
+    int p = blockIdx.x * blockDim.x + threadIdx.x;
+
+    if (p >= size)
+        return;
+
+    int q = parent[p];
+    parent[p] = findLevelRoot(parent, q, f).first;
 }
 
 /**
@@ -146,29 +173,24 @@ __device__ void connect(int& a, int& b, const Vector2D<int>& f,
  * @param f Starting image.
  * @return __global__
  */
-__global__ void kernel_maxtree(Vector2D<int> parent, Vector2D<int> f)
+__global__ void kernel_maxtree(Vector2D<int> f, Vector2D<int> parent)
 {
     int rows = parent.getRows();
     int cols = parent.getCols();
     int size = rows * cols;
 
-    int x = blockIdx.x * blockDim.x + threadIdx.x;
-    int y = blockIdx.y * blockDim.y + threadIdx.y;
+    int p = blockIdx.x * blockDim.x + threadIdx.x;
 
-    if (x < cols && y < rows)
+    if (p >= size)
+        return;
+
+    parent[p] = p;
+    int neighbors[4];
+    size_t nb_size = undef_neighbors(p, parent, neighbors);
+    for (size_t i = 0; i < nb_size; i++)
     {
-        int point = y * cols + x;
-        if (point >= 0 && point < size)
-        {
-            parent[point] = point;
-            int neighbors[4];
-            size_t nb_size = undef_neighbors(point, parent, neighbors);
-            for (size_t i = 0; i < nb_size; i++)
-            {
-                int neighbor = neighbors[i];
-                connect(point, neighbor, f, parent);
-            }
-        }
+        int neighbor = neighbors[i];
+        connect(p, neighbor, f, parent);
     }
 }
 
@@ -182,11 +204,14 @@ void kernelMaxtree(Vector2D<int> parent, Vector2D<int> f)
 {
     int rows = f.getRows();
     int cols = f.getCols();
+    int size = rows * cols;
 
-    dim3 threadsPerBlock(16, 16);
-    dim3 numBlocks((cols + 15) / 16, (rows + 15) / 16);
+    int threadsPerBlock = 256;
+    int numBlocks = (size + threadsPerBlock - 1) / threadsPerBlock;
 
-    kernel_maxtree<<<numBlocks, threadsPerBlock>>>(parent, f);
+    kernel_maxtree<<<numBlocks, threadsPerBlock>>>(f, parent);
+    cudaDeviceSynchronize();
 
+    kernel_flatten<<<numBlocks, threadsPerBlock>>>(f, parent);
     cudaDeviceSynchronize();
 }
