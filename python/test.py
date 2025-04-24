@@ -1,3 +1,4 @@
+"""
 import numpy as np
 from src.berger import maxtree, canonize_tree_no_order
 from src.display import display_graph
@@ -25,3 +26,37 @@ for i in range(len(parentt)):
         print(image4[i][j], end=" ")
     print('\n')
 print('\n')
+"""
+
+from src.berger import maxtree, canonize_tree_no_order
+from src.display import display_graph
+import time
+import cv2
+import numpy as np
+import os
+
+def load_gray_image_as_array(path):
+    image = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
+    return image
+
+def main():
+    for i in range(1, 8):
+        path = f"/home/axel/Documents/LRE/LRE-Axel/cuda/images/1080p/1080p_{i}.png"
+
+        if not os.path.exists(path):
+            print(f"{path} n'existe pas, on saute.")
+            continue
+
+        f = load_gray_image_as_array(path)
+
+        start = time.time()
+
+        parent = maxtree(f)
+
+        end = time.time()
+        duration = end - start
+
+        print(f"{path} : Temps d'exécution : {duration:.6f} secondes")
+
+if __name__ == "__main__":
+    main()

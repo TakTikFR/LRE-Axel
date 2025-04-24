@@ -2,4 +2,4 @@
 
 #include "vector2D.cuh"
 
-void kernelComputeAttribute(Vector2D<int> parent, Vector2D<int> area);
+void kernelComputeArea(Vector2D<int> parent, Vector2D<int> area);

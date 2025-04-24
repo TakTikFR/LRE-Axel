@@ -5,38 +5,41 @@
 #include "vector2D.cuh"
 
 /**
- * @brief Create a maxtree using a non-sorting algorithm on GPU.
+ * @brief Computute the area from a maxtree
  *
  * @param f Starting image.
- * @return Vector2D<Point> Parent image.
+ * @return Vector2D<Point> Area image.
  */
-__host__ Vector2D<int> computeAttribute(Vector2D<int>& f)
+__host__ Vector2D<int> computeArea(Vector2D<int>& f)
 {
     int rows = f.getRows();
     int cols = f.getCols();
     int size = rows * cols;
 
     int* res_data = (int*)malloc(sizeof(int) * size);
-    Vector2D<int> parent_result(rows, cols, res_data);
+    Vector2D<int> area_result(rows, cols, res_data);
 
     int* d_f;
-    int* d_parent;
+    int* d_area;
     cudaMalloc(&d_f, size * sizeof(int));
-    cudaMalloc(&d_parent, size * sizeof(int));
+    cudaMalloc(&d_area, size * sizeof(int));
 
     cudaMemcpy(d_f, f.getData(), size * sizeof(int), cudaMemcpyHostToDevice);
-    cudaMemset(d_parent, 1, size * sizeof(int));
+
+    std::vector<int> init_area(size, 1);
+    cudaMemcpy(d_area, init_area.data(), size * sizeof(int),
+               cudaMemcpyHostToDevice);
 
     Vector2D<int> f_dev(rows, cols, d_f);
-    Vector2D<int> parent_dev(rows, cols, d_parent);
+    Vector2D<int> area_dev(rows, cols, d_area);
 
-    kernelComputeAttribute(f_dev, d_parent);
+    kernelComputeArea(f_dev, area_dev);
 
-    cudaMemcpy(parent_result.getData(), d_parent, size * sizeof(int),
+    cudaMemcpy(area_result.getData(), d_area, size * sizeof(int),
                cudaMemcpyDeviceToHost);
 
     cudaFree(d_f);
-    cudaFree(d_parent);
+    cudaFree(d_area);
 
-    return parent_result;
+    return area_result;
 }

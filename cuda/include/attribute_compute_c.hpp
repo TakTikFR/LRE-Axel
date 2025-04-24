@@ -2,4 +2,4 @@
 
 #include "vector2D.cuh"
 
-Vector2D<int> computeAttribute(Vector2D<int>& f);
+Vector2D<int> computeArea(Vector2D<int>& f);

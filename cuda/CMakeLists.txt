@@ -23,7 +23,9 @@ set(SOURCES
         src/max_tree_c.cpp
         src/utils.cpp
         src/tilling.cu 
-        src/tilling_c.cpp 
+        src/tilling_c.cpp
+        src/attribute_compute_c.cpp
+        src/attribute_compute.cu
         main.cpp
 )
 
@@ -32,6 +34,8 @@ set(HEADERS
         include/max_tree_c.hpp
         include/tilling.cuh 
         include/tilling_c.hpp
+        include/attribute_compute.cuh
+        include/attribute_compute_c.hpp
         include/utils.hpp
         include/vector2D.cuh
 )

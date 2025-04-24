@@ -21,11 +21,11 @@ void printVector2D(Vector2D<int>& image)
         for (int j = 0; j < cols; j++)
         {
             int point = i * cols + j;
-            int np = image[point];
-            int x = np / cols;
-            int y = np % cols;
+            // int np = image[point];
+            // int x = np / cols;
+            // int y = np % cols;
 
-            std::cout << "(" << x << ", " << y << ") = " << image[point] << " ";
+            std::cout << "(" << i << ", " << j << ") = " << image[point] << " ";
         }
 
         std::cout << '\n';
