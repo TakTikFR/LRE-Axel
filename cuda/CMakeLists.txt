@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.30)
 project(LRE_Axel)
 
+set(CMAKE_CUDA_ARCHITECTURES 86)
 set(CMAKE_CXX_STANDARD 20)
 
 enable_language(CUDA)
@@ -26,6 +27,8 @@ set(SOURCES
         src/tilling_c.cpp
         src/attribute_compute_c.cpp
         src/attribute_compute.cu
+        src/area_filtering_c.cpp
+        src/area_filtering.cu
         main.cpp
 )
 
@@ -36,6 +39,8 @@ set(HEADERS
         include/tilling_c.hpp
         include/attribute_compute.cuh
         include/attribute_compute_c.hpp
+        include/area_filtering.cuh
+        include/area_filtering_c.hpp
         include/utils.hpp
         include/vector2D.cuh
 )

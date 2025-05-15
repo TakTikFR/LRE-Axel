@@ -63,7 +63,7 @@ __global__ void kernel_connectBoundaries(Vector2D<int> f, Vector2D<int> parent,
 
     if (x % block_size == 0 && p - 1 >= 0)
     {
-        int np = p - 1;
+        int np = p - 1;        
         connect(p, np, f, parent);
     }
 

@@ -3,6 +3,7 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
 #include <vector>
+#include <string>
 
 #include "vector2D.cuh"
 
@@ -134,8 +135,6 @@ int* sortVector2D(const Vector2D<int>& f)
  *
  * @param parent Parent image.
  * @param f Starting image.
- * @return Vector2D<int> Parent matrix with canonized representation of the
- * tree.
  */
 Vector2D<int> canonize_tree(Vector2D<int> parent, Vector2D<int> f)
 {
@@ -154,6 +153,14 @@ Vector2D<int> canonize_tree(Vector2D<int> parent, Vector2D<int> f)
     return parent;
 }
 
+/**
+ * @brief Convert an image to its grayscale version.
+ *
+ * @param path Path of the image.
+ * @param rows
+ * @param cols
+ * @return int* Return the pointer of the grayscale image
+ */
 int* loadGrayImageAsVector(const std::string& path, int& rows, int& cols)
 {
     cv::Mat image = cv::imread(path, cv::IMREAD_GRAYSCALE);
@@ -174,4 +181,28 @@ int* loadGrayImageAsVector(const std::string& path, int& rows, int& cols)
             vector[i * cols + j] = static_cast<int>(image.at<uchar>(i, j));
 
     return vector;
+}
+
+/**
+ * @brief Convert a matrix to its grayscale image representation
+ *
+ * @param matrix Matrix to convert.
+ * @param filename output filename
+ * @return int* Return the pointer of the grayscale image
+ */
+void matrixToImage(const Vector2D<int>& matrix, const std::string& filename) {
+    int rows = matrix.getRows();
+    int cols = matrix.getCols();
+
+    cv::Mat image(rows, cols, CV_8UC1);
+
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            int point = i * cols + j;
+            int pixel = std::clamp(matrix[point], 0, 255);
+            image.at<uchar>(i, j) = static_cast<uchar>(pixel);
+        }
+    }
+
+    cv::imwrite(filename, image);
 }
