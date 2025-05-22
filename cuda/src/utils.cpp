@@ -26,7 +26,8 @@ void printVector2D(Vector2D<int>& image)
             // int x = np / cols;
             // int y = np % cols;
 
-            std::cout << "(" << i << ", " << j << ") = " << image[point] << " ";
+            //std::cout << "(" << i << ", " << j << ") = " << image[point] << " ";
+            std::cout << image[point] << " ";
         }
 
         std::cout << '\n';
@@ -79,10 +80,10 @@ void displayGraph(Vector2D<int>& parent, Vector2D<int>& f,
             int value_from = f[i];
             int value_to = f[parent_index];
 
-            fout << "    \"(" << y1 << ", " << x1 << ") [" << value_from
+            fout << "    \"(" << x1 << ", " << y1 << ") [" << value_from
                  << "]\""
                  << " -> "
-                 << "\"(" << y2 << ", " << x2 << ") [" << value_to << "]\";\n";
+                 << "\"(" << x2 << ", " << y2 << ") [" << value_to << "]\";\n";
         }
     }
 

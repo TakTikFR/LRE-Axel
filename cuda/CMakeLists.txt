@@ -29,6 +29,8 @@ set(SOURCES
         src/attribute_compute.cu
         src/area_filtering_c.cpp
         src/area_filtering.cu
+        src/depth_image_c.cpp
+        src/depth_image.cu
         main.cpp
 )
 
@@ -41,6 +43,8 @@ set(HEADERS
         include/attribute_compute_c.hpp
         include/area_filtering.cuh
         include/area_filtering_c.hpp
+        include/depth_image_c.hpp
+        include/depth_image.cuh
         include/utils.hpp
         include/vector2D.cuh
 )

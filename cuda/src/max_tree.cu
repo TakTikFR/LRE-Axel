@@ -5,6 +5,7 @@
 #include "max_tree.cuh"
 #include "max_tree_c.hpp"
 #include "vector2D.cuh"
+#include "utils.hpp"
 
 /**
  * @brief Find all the 4-neighbors that has been already visited (their parent
@@ -35,8 +36,9 @@ __device__ size_t undef_neighbors(int point, Vector2D<int>& parent,
         if (newPoint >= 0 && newPoint < size)
         {
             int neighbor = parent[newPoint];
-            if (neighbor != -1)
+            if (neighbor != -1) {
                 neighbors[count++] = neighbor;
+            }
         }
     }
 
@@ -59,10 +61,21 @@ __device__ bool totalOrderOp(int& p, int& q, const Vector2D<int>& f)
     int rows = f.getRows();
     int cols = f.getCols();
 
-    if (f[p] < f[q])
+    if (f[p] < f[q]) {
         return true;
-    else if (f[p] == f[q])
-        return p > q;
+    } else if (f[p] == f[q]) {
+        int py = p / cols;  // y
+        int px = p % cols;  // x
+        int qy = q / cols;
+        int qx = q % cols;
+
+        if (px > qx)
+            return true;
+        else if (px == qx && py > qy)
+            return true;
+        else
+            return false;
+    }
 
     return false;
 }
@@ -81,7 +94,7 @@ __device__ std::pair<int, int> findPeakRoot(Vector2D<int>& parent, int x,
                                             int lvl, const Vector2D<int>& f)
 {
     int q = parent[x];
-    while (q != x && lvl <= f[q])
+    while (q != -1 && q != x && lvl <= f[q])
     {
         int old = q;
         q = parent[q];
@@ -107,6 +120,12 @@ __device__ std::pair<int, int> findLevelRoot(Vector2D<int>& parent, int x,
     return findPeakRoot(parent, x, f[x], f);
 }
 
+__device__ void swap(int& a, int& b) {
+    int temp = a;
+    a = b;
+    b = temp;
+}
+
 // rajouter host device.
 /**
  * @brief Connect two separate trees.
@@ -116,13 +135,13 @@ __device__ std::pair<int, int> findLevelRoot(Vector2D<int>& parent, int x,
  * @param f Starting image.
  * @param parent Parent image.
  */
-__device__ void connect(int& a, int& b, const Vector2D<int>& f,
+__device__ void connect(int a, int b, const Vector2D<int>& f,
                         Vector2D<int>& parent)
 {
     while (b != -1)
     {
         if (f[b] < f[a])
-            std::swap(a, b);
+            swap(a, b);
 
         auto [newA, A] = findLevelRoot(parent, a, f);
         a = newA;
@@ -131,8 +150,8 @@ __device__ void connect(int& a, int& b, const Vector2D<int>& f,
 
         if (totalOrderOp(b, a, f))
         {
-            std::swap(a, b);
-            std::swap(A, B);
+            swap(a, b);
+            swap(A, B);
         }
 
         if (a == b)
@@ -157,7 +176,9 @@ __global__ void kernel_flatten(Vector2D<int> f, Vector2D<int> parent)
     int cols = parent.getCols();
     int size = rows * cols;
 
-    int p = blockIdx.x * blockDim.x + threadIdx.x;
+    int x = blockIdx.x * blockDim.x + threadIdx.x;
+    int y = blockIdx.y * blockDim.y + threadIdx.y;
+    int p = y * cols + x;
 
     if (p >= size)
         return;
@@ -177,21 +198,19 @@ __global__ void kernel_maxtree(Vector2D<int> f, Vector2D<int> parent)
 {
     int rows = parent.getRows();
     int cols = parent.getCols();
-    int size = rows * cols;
 
-    int p = blockIdx.x * blockDim.x + threadIdx.x;
+    int x = blockIdx.x * blockDim.x + threadIdx.x;
+    int y = blockIdx.y * blockDim.y + threadIdx.y;
+    int p = y * cols + x;
 
-    if (p >= size)
+    if (x < cols && y < rows)
         return;
 
     parent[p] = p;
-    int neighbors[4];
-    size_t nb_size = undef_neighbors(p, parent, neighbors);
-    for (size_t i = 0; i < nb_size; i++)
-    {
-        int neighbor = neighbors[i];
-        connect(p, neighbor, f, parent);
-    }
+    if (x + 1 < cols)
+        connect(p, p + 1, f, parent);
+    if (y + 1 < rows)
+        connect(p, p + cols, f, parent);
 }
 
 /**
@@ -204,14 +223,15 @@ void kernelMaxtree(Vector2D<int> parent, Vector2D<int> f)
 {
     int rows = f.getRows();
     int cols = f.getCols();
-    int size = rows * cols;
 
-    int threadsPerBlock = 256;
-    int numBlocks = (size + threadsPerBlock - 1) / threadsPerBlock;
+    int blockSize = f.getRows();
+    dim3 blockDim(blockSize, blockSize);
+    dim3 gridDim((cols + blockSize - 1) / blockSize,
+                 (rows + blockSize - 1) / blockSize);
 
-    kernel_maxtree<<<numBlocks, threadsPerBlock>>>(f, parent);
+    kernel_maxtree<<<gridDim, blockDim>>>(f, parent);
     cudaDeviceSynchronize();
 
-    kernel_flatten<<<numBlocks, threadsPerBlock>>>(f, parent);
+    kernel_flatten<<<gridDim, blockDim>>>(f, parent);
     cudaDeviceSynchronize();
 }

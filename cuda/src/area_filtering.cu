@@ -29,10 +29,7 @@ __global__ void kernel_areaFiltering(Vector2D<int> f, Vector2D<int> parent, Vect
         int point = y * cols + x;
         int par = parent[point];
         if (area[point] > filterValue || (area[point] == 1 && area[par] > filterValue))
-        {
-            //printf("point: (%d, %d), area: %d, parent: (%d, %d), area: %d\n", point / cols, point % cols, area[point], parent[point] / cols, parent[point] % cols, area[parent[point]]);
             filteredImage[point] = 0;
-        }
     }
 }
 

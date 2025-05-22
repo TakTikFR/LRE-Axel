@@ -1,45 +1,6 @@
 #include "max_tree.cuh"
 #include "vector2D.cuh"
-
-/**
- * @brief Find all the 4-neighbors that has been already visited (their parent
- * value is already set) and return them.
- *
- * @param p Pixel reference to find their neighbors.
- * @param parent Parent image.
- * @param neighbors List of all defined 4-neighbors (Or empty if no neighbors).
- * @return size_t Size of the list of neighbors;
- */
-__device__ size_t undef_neighbors_t(int point, Vector2D<int>& parent,
-                                    int* neighbors)
-{
-    int rows = parent.getRows();
-    int cols = parent.getCols();
-    int size = rows * cols;
-
-    int x = point % cols;
-    int y = point / cols;
-
-    int dx[4] = { -1, 1, 0, 0 };
-    int dy[4] = { 0, 0, -1, 1 };
-
-    size_t count = 0;
-    for (int i = 0; i < 4; ++i)
-    {
-        int nx = x + dx[i];
-        int ny = y + dy[i];
-
-        if (nx >= 0 && nx < cols && ny >= 0 && ny < rows)
-        {
-            int np = ny * cols + nx;
-            int neighbor = parent[np];
-            if (neighbor != -1)
-                neighbors[count++] = neighbor;
-        }
-    }
-
-    return count;
-}
+#include "utils.hpp"
 
 /**
  * @brief Cuda kernel to connect all the sub-trees by linking all the boundaries
@@ -63,7 +24,7 @@ __global__ void kernel_connectBoundaries(Vector2D<int> f, Vector2D<int> parent,
 
     if (x % block_size == 0 && p - 1 >= 0)
     {
-        int np = p - 1;        
+        int np = p - 1;
         connect(p, np, f, parent);
     }
 
@@ -122,13 +83,11 @@ __global__ void kernel_tillingMaxtree(Vector2D<int> f, Vector2D<int> parent,
         return;
 
     parent[p] = p;
-    int neighbors[4];
-    size_t nb_size = undef_neighbors_t(p, parent, neighbors);
-    for (size_t i = 0; i < nb_size; i++)
-    {
-        int neighbor = neighbors[i];
-        connect(p, neighbor, f, parent);
-    }
+    
+    if (x + 1 < cols)
+        connect(p, p + 1, f, parent);
+    if (y + 1 < rows)
+        connect(p, p + cols, f, parent);
 }
 
 /**
@@ -139,8 +98,7 @@ __global__ void kernel_tillingMaxtree(Vector2D<int> f, Vector2D<int> parent,
  */
 void kernelTillingMaxtree(Vector2D<int> parent, Vector2D<int> f)
 {
-    int blockSize = 4;
-
+    int blockSize = 16;
     int rows = f.getRows();
     int cols = f.getCols();
     int size = rows * cols;
