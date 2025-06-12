@@ -13,7 +13,7 @@
  * @param f Starting image.
  * @return Vector2D<Point> Parent image.
  */
-__host__ Vector2D<int> tillingMaxtree(Vector2D<int>& f)
+Vector2D<int> tillingMaxtree(Vector2D<int>& f)
 {
     int rows = f.getRows();
     int cols = f.getCols();

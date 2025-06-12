@@ -1,7 +1,6 @@
 #include <cuda.h>
 #include <cuda_runtime.h>
 #include <stdio.h>
-
 #include "max_tree.cuh"
 #include "vector2D.cuh"
 
@@ -19,17 +18,19 @@ __global__ void kernel_areaFiltering(Vector2D<int> f, Vector2D<int> parent, Vect
 {
     int rows = area.getRows();
     int cols = area.getCols();
-    int size = rows * cols;
 
     int x = blockIdx.x * blockDim.x + threadIdx.x;
     int y = blockIdx.y * blockDim.y + threadIdx.y;
 
     if (x < cols && y < rows)
     {
-        int point = y * cols + x;
-        int par = parent[point];
-        if (area[point] > filterValue || (area[point] == 1 && area[par] > filterValue))
-            filteredImage[point] = 0;
+        int p = y * cols + x;
+        int q = p;
+
+        while (area[q] < filterValue && q != parent[q])
+            q = parent[q];
+
+        filteredImage[p] = f[q];
     }
 }
 

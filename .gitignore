@@ -336,3 +336,10 @@ pyrightconfig.json
 # Ignore all local history of files
 .history
 .ionide
+
+backupmain.cpp
+
+*.png
+cuda/test/*
+cuda/cpp/*
+cuda/image/*

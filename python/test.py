@@ -41,22 +41,43 @@ def load_gray_image_as_array(path):
 
 def main():
     for i in range(1, 8):
-        path = f"/home/axel/Documents/LRE/LRE-Axel/cuda/images/1080p/1080p_{i}.png"
+        #path = f"/home/axel/Documents/LRE/LRE-Axel/cuda/images/1080p/1080p_{i}.png"
 
-        if not os.path.exists(path):
-            print(f"{path} n'existe pas, on saute.")
-            continue
+        #if not os.path.exists(path):
+        #    print(f"{path} n'existe pas, on saute.")
+        #    continue
 
-        f = load_gray_image_as_array(path)
+        #f = load_gray_image_as_array(path)
 
-        start = time.time()
+        #start = time.time()
+
+        f = np.array([
+            255, 255, 0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+            255, 255, 0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+            0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+            0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+            0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+            0,   0,   0,   0,   0,   0, 253, 253,   0,   0,   0,   0,   0,   0,   0,   0,
+            0,   0,   0,   0,   0,   0, 253, 253,   0,   0,   0,   0,   0,   0,   0,   0,
+            0,   0,   0,   0,   0,   0, 253, 253,   0,   0,   0,   0,   0,   0,   0,   0,
+            0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+            0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+            0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0, 255, 255,
+            0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0, 255, 255,
+            0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0, 255, 255,
+            0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0, 255, 255,
+            0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+            0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0
+], dtype=np.uint8).reshape(16, 16)
 
         parent = maxtree(f)
+        parent = canonize_tree_no_order(parent, f)
+        display_graph(parent, f, "verif");
 
-        end = time.time()
-        duration = end - start
+        #end = time.time()
+        #duration = end - start
 
-        print(f"{path} : Temps d'exécution : {duration:.6f} secondes")
+        #print(f"{path} : Temps d'exécution : {duration:.6f} secondes")
 
 if __name__ == "__main__":
     main()

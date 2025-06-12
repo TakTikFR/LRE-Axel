@@ -10,7 +10,7 @@ __device__ int maxDepth = 0;
  * @param depthImage Depth image.
  * @return __global__ 
  */
-__global__ void kernel_findDepth(Vector2D<int> parent, Vector2D<int> depthImage) {
+__global__ void kernel_findDepth(Vector2D<int> f, Vector2D<int> parent, Vector2D<int> depthImage) {
     int rows = parent.getRows();
     int cols = parent.getCols();
 
@@ -23,9 +23,11 @@ __global__ void kernel_findDepth(Vector2D<int> parent, Vector2D<int> depthImage)
         int par = parent[point];
 
         while (par != -1 && par != old) {
+            if (f[old] != f[par])
+                depthImage[point]++;
+
             old = par;
             par = parent[par];
-            depthImage[point]++;
         }
 
         atomicMax(&maxDepth, depthImage[point]);
@@ -57,7 +59,7 @@ __global__ void kernel_normalizeDepth(Vector2D<int> depthImage) {
  * @param parent Maxtree.
  * @param depthImage Depth image.
  */
-void kernelImageDepth(Vector2D<int> parent, Vector2D<int> depthImage)
+void kernelImageDepth(Vector2D<int> f, Vector2D<int> parent, Vector2D<int> depthImage)
 {
     int rows = parent.getRows();
     int cols = parent.getCols();
@@ -67,9 +69,9 @@ void kernelImageDepth(Vector2D<int> parent, Vector2D<int> depthImage)
     dim3 gridDim((cols + blockSize - 1) / blockSize,
                  (rows + blockSize - 1) / blockSize);
 
-    kernel_findDepth<<<gridDim, blockDim>>>(parent, depthImage);
+    kernel_findDepth<<<gridDim, blockDim>>>(f, parent, depthImage);
     cudaDeviceSynchronize();
 
-    kernel_normalizeDepth<<<gridDim, blockDim>>>(depthImage);
-    cudaDeviceSynchronize();
+    //kernel_normalizeDepth<<<gridDim, blockDim>>>(depthImage);
+    //cudaDeviceSynchronize();
 }

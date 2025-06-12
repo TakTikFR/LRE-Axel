@@ -5,6 +5,7 @@
 
 #include "vector2D.cuh"
 
-__host__ Vector2D<int> tillingMaxtree(Vector2D<int>& f);
+//__host__ Vector2D<int> tillingMaxtree(Vector2D<int>& f);
+Vector2D<int> tillingMaxtree(Vector2D<int>& f);
 
 #endif // TILLING_C_HPP

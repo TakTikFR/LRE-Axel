@@ -58,12 +58,12 @@ int* data3 = new int[256]{
     255, 255, 0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
     0,   0,   0,   0,   255, 255, 255, 0,   0,   0,   0,   0,   0,   0,   0,   0,
-    0,   0,   0,   0,   255, 255, 255, 0,   0,   0,   0,   0,   0,   0,   0,   0,
-    0,   0,   0,   0,   255, 255, 255, 0,   0,   0,   0,   0,   0,   0,   0,   0,
-    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
-    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
-    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
-    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+    0,   0,   0, 155,   255, 255, 255, 0,   0,   0,   0,   0,   0,   0,   0,   0,
+    0,   0,   0, 155,   255, 255, 255, 0,   0,   0,   0,   0,   0,   0,   0,   0,
+    0,   0,  45, 155,   155, 155, 0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+    0,   0,  45, 155,   155, 255, 0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+    0,   0,  45,  45,   255, 255, 0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+    0,   0,  45,  45,   45,   45, 0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   255,
     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   255, 255,
     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   255, 255,
@@ -97,10 +97,35 @@ int* data4 = new int[256]{
 int rows4 = 16;
 int cols4 = 16;
 
-void test1(std::string path) {
+int* data5 = new int[1024]{
+    255, 255, 0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0, 200, 200, 200, 200, 200,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   255, 255,
+    255, 255, 0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0, 200, 200, 200, 200, 200,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   255, 255,
+    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0, 200, 200, 200, 200, 200,  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+    0,   0,   0,   0, 255, 255, 255, 0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   255, 255, 255, 0,   0,   0,   0,   0,   0,   0,   0,   0,
+    0,   0,   0, 155, 255, 255, 255, 0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   255, 255, 255, 155, 0,   0,   0,   0,   0,   0,   0,   0,
+    0,   0,   0, 155, 255, 255, 255, 0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   255, 255, 255, 155, 0,   0,   0,   0,   0,   0,   0,   0,
+    0,   0,  45, 155, 155, 155, 0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   155, 155, 155, 45, 0,   0,   0,   0,   0,   0,   0,   0,
+    0,   0,  45, 155, 155, 255, 0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   255, 155, 155, 45, 0,   0,   0,   0,   0,   0,   0,   0,
+    0,   0,  45, 45,  255, 255, 0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   255, 255, 45, 45,  0,   0,   0,   0,   0,   0,   0,   0,
+    0,   0,  45, 45,  45,  45,  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   45,  45,  45,  45,  0,   0,   0,   0,   0,   0,   0,   0,
+    0,   0,   0,  0,   0,   0,  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,    0,   0,   0,   0,  0,   0,   0,   0,   0,   0,   0, 255,
+    0,   0,   0,  0,   0,   0,  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,    0,   0,   0,   0,  0,   0,   0,   0,   0,   0,  255, 255,
+    0,   0,   0,  0,   0,   0,  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,    0,   0,   0,   0,  0,   0,   0,   0,   0,   0,  255, 255,
+    0,   0,   0,  0,   0,   0,  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,    0,   0,   0,   0,  0,   0,   0,   0,   0,   0,   0, 255,
+    0,   0,   0,  0,   0,   0,  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,    0,   0,   0,   0,  0,   0,   0,   0,   0,   0,   0,   0,
+    0,   0,   0,  0,   0,   0,  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,    0,   0,   0,   0,  0,   0,   0,   0,   0,   0,   0,   0,
+    0,   0,   0,  0,   0,   0,  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,    0,   0,   0,   0,  0,   0,   0,   0,   0,   0,   0,   0,
+    0,   0,   0,  0,   0,   0,  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,    0,   0,   0,   0,  0,   0,   0,   0,   0,   0,   0,   0
+};
+
+int rows5 = 32;
+int cols5 = 32;
+
+int* test1(std::string path) {
     int rows;
     int cols;
     int *data = loadGrayImageAsVector(path, rows, cols);
+    return data;
 }
 
 void test2() {
@@ -108,24 +133,45 @@ void test2() {
     matrixToImage(f, "originalImage.png");
     Vector2D<int> parent = tillingMaxtree(f);
     displayGraph(parent, f, "graph_canonized_ref");
-    Vector2D<int> area = computeArea(parent);
+    Vector2D<int> area = computeArea(f, parent);
+    matrixToImage(area, "image_area.png");
     printVector2D(area);
-    Vector2D<int> filteredImage = areaFiltering(f, parent, area, 5);
+    Vector2D<int> filteredImage = areaFiltering(f, parent, area, 10);
+    Vector2D<int> depth_image = depthImage(f, parent);
+    matrixToImage(depth_image, "iamgeDepth.png");
     printVector2D(f);
     printVector2D(filteredImage);
     matrixToImage(filteredImage, "filteredImage.png");
 }
 
 void test3() {
-    Vector2D<int> f(rows2, cols2, data2);
+    Vector2D<int> f(rows3, cols3, data3);
     matrixToImage(f, "OriginalImage.png");
     Vector2D<int> parent = tillingMaxtree(f);
     displayGraph(parent, f, "parent_test");
-    Vector2D<int> depth = depthImage(parent);
+    Vector2D<int> depth = depthImage(f, parent);
     printVector2D(depth);
     matrixToImage(depth, "DepthImage.png");
 }
 
-int main(int argc, char *argv[]) {
-    test2();
+#include "max_tree_c.hpp"
+#include "tilling_c.hpp"
+#include "utils.hpp"
+#include "vector2D.cuh"
+#include "attribute_compute_c.hpp"
+#include "area_filtering_c.hpp"
+#include "depth_image_c.hpp"
+#include "benchmark_area.cuh"  // Ajout de ce include
+#include <iostream>
+#include <string>
+
+// [Vos données existantes data1 à data5 et leurs déclarations restent inchangées...]
+
+int main(int argc, char** argv) {
+    benchmark::Initialize(&argc, argv);
+    
+    runBenchmarks();
+    
+    benchmark::Shutdown();
+    return 0;
 }

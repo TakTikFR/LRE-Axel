@@ -15,7 +15,6 @@ __global__ void kernel_connectBoundaries(Vector2D<int> f, Vector2D<int> parent,
 {
     int rows = parent.getRows();
     int cols = parent.getCols();
-    int size = rows * cols;
 
     int x = blockIdx.x * blockDim.x + threadIdx.x;
     int y = blockIdx.y * blockDim.y + threadIdx.y;
@@ -101,7 +100,6 @@ void kernelTillingMaxtree(Vector2D<int> parent, Vector2D<int> f)
     int blockSize = 16;
     int rows = f.getRows();
     int cols = f.getCols();
-    int size = rows * cols;
 
     dim3 blockDim(blockSize, blockSize);
     dim3 gridDim((cols + blockSize - 1) / blockSize,

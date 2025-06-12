@@ -12,22 +12,24 @@
  *
  * @param image Image to be printed.
  */
-void printVector2D(Vector2D<int>& image)
+void printVector2D(Vector2D<int>& image) 
 {
     int rows = image.getRows();
     int cols = image.getCols();
+
+    int maxValue = image[0];
+    for (int i = 1; i < rows * cols; ++i)
+        if (image[i] > maxValue)
+            maxValue = image[i];
+
+    int width = std::to_string(maxValue).length() + 1;
 
     for (int i = 0; i < rows; i++)
     {
         for (int j = 0; j < cols; j++)
         {
             int point = i * cols + j;
-            // int np = image[point];
-            // int x = np / cols;
-            // int y = np % cols;
-
-            //std::cout << "(" << i << ", " << j << ") = " << image[point] << " ";
-            std::cout << image[point] << " ";
+            std::cout << std::setw(width) << image[point];
         }
 
         std::cout << '\n';
