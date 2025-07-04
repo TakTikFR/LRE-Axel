@@ -131,8 +131,9 @@ int* test1(std::string path) {
 void test2() {
     Vector2D<int> f(rows2, cols2, data2);
     matrixToImage(f, "originalImage.png");
-    Vector2D<int> parent = tillingMaxtree(f);
+    Vector2D<int> parent = maxtree(f);
     displayGraph(parent, f, "graph_canonized_ref");
+    /*
     Vector2D<int> area = computeArea(f, parent);
     matrixToImage(area, "image_area.png");
     printVector2D(area);
@@ -142,6 +143,7 @@ void test2() {
     printVector2D(f);
     printVector2D(filteredImage);
     matrixToImage(filteredImage, "filteredImage.png");
+    */
 }
 
 void test3() {
@@ -161,11 +163,9 @@ void test3() {
 #include "attribute_compute_c.hpp"
 #include "area_filtering_c.hpp"
 #include "depth_image_c.hpp"
-#include "benchmark_area.cuh"  // Ajout de ce include
+#include "benchmark_area.cuh"
 #include <iostream>
 #include <string>
-
-// [Vos données existantes data1 à data5 et leurs déclarations restent inchangées...]
 
 int main(int argc, char** argv) {
     benchmark::Initialize(&argc, argv);

@@ -30,9 +30,10 @@ set(SOURCES
         src/area_filtering.cu
         src/depth_image_c.cpp
         src/depth_image.cu
-        cpp/main.cpp
+        #cpp/main.cpp
         cpp/for_benchmark.cpp
-        #src/benchmark_area.cu
+        src/benchmark_area.cu
+        main.cpp
 )
 
 set(HEADERS
@@ -49,7 +50,7 @@ set(HEADERS
         include/utils.hpp
         include/vector2D.cuh
         cpp/for_benchmark.hpp
-        #include/benchmark_area.cuh
+        include/benchmark_area.cuh
 )
 
 add_executable(LRE_Axel ${SOURCES} ${HEADERS})

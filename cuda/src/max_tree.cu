@@ -203,7 +203,7 @@ __global__ void kernel_maxtree(Vector2D<int> f, Vector2D<int> parent)
     int y = blockIdx.y * blockDim.y + threadIdx.y;
     int p = y * cols + x;
 
-    if (x < cols && y < rows)
+    if (x >= cols || y >= rows)
         return;
 
     parent[p] = p;
